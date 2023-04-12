@@ -79,13 +79,12 @@ class Game:
     def play_hist(self,c):
         '''update the history when p plays c. (eventually revealing cards etc.), eol: if true then adds and endofline char after appending the history. '''
         p = c.player
-        h = f'{p}: {c.name()}'
-        
+        h = f'{p}: [{c.name()}'
+        d=f']. '
         for obs in self.cards:
-            d=f'. '
-            print(f'played {c.name()}, obs {obs.name()}')
-            if obs.position == c.position and obs.player == c.player and obs != c:
-                d=f', revealing card f{obs.name()}. '
+            #print(f'played {c.name()}, obs {obs.name()}')
+            if obs.position == c.position and obs.player == c.player and obs != c and obs.isPlayed == False and obs.inHand == False:
+                d=f'; {obs.name()} revealed]. '
         self.history+=h
         self.history+=d
         
@@ -121,10 +120,6 @@ class Game:
         else: winner = 'B'
         print(f'winner: {winner}, final score: {self.points}')
 
-random.seed(1)
-g = Game('r', 'h', 'B')      #create a game instance
-g.generation()               #shuffle the cards
-g.sim()                     #play
 
 
 
