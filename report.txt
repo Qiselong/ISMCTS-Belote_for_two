@@ -1,0 +1,63 @@
+########## 	INTRODUCTION 
+Before the introduction of MCST in 2006 by Coulom, Monte Carlo like methods where used to simulate games. When it's more natural to use random distributions for simulating games with incomplete information (simulate dice rolls or scrabble for instance), monte carlo methods were also used for complete information games as chess or go. Exploring the game tree to evaluate which move is the best is then crucial. Before 2007, a classical way of not exploding the memory was to prune nodes, aka have some criterion to decide to not explore further the children of a node.  
+For zero sum games with two players (chess, go, and many others) a usual technique for creating a computer powerful enough to beat humans is to create a tree and the algorithm explore the tree using some techniques like alpha-beta min max etc.
+However for more complex games such as go (chess: 10^50 board config, go 10^171) these approaches are not powerful enough and the best players outperform by far best computers. 
+An important thing to note is that MCST is aheuristic, meaning no knowledge on the game is apriori necessary to work. On the contrary, for minimax, we need to have knowledge on the game or we are forced to do full depth simulation. For chess, doing full depth is colossal, so the minimax needs to use prior game knowledge. While drawing such strategies was possible, it is much more difficult to do it for Go; which explains the success of MCST for go playing. Still, note that having such game knowledge improves the quality of the simulations done.
+Heavy playouts: 
+
+At each step: the programm grows a tree node by node, each different children of a node corresponding to a different decision. At each step, the program select  [SELECTION] a node which has not be fully expanded and expand [EXPANSION] it. Then simulate a game [SIMULATION] computes the outcome ("how go it seems to be?") and store the information of this game up to the root [BACKPROPAGATION]. Each node stores how much time one of his children has been expanded, the average output and output^2 (to compute an average gain and variance). 
+
+One of the main difference with previous technique is the progressive pruning: for other alg, when a node is bad enough, his children are not explored anymore, so it's cut from the tree which allows to explore safest part of the tree. The problem with that is that some consecutive bad decision may end in a configuration of the board so good that the game is won (or almost). With MTCS, the selection is done randomly considering a node that has the best current rating, but makes sure that the probability of being chosen of a node is never 0. This way, it has the possibility to explore games with a series of "bad" choices leading to a killer move.
+As there is no pruning, to make sure the memory does not explodes during the iterations, only nodes close to the root are kept in memory.
+
+When exploring the tree is done because we run out of budget or we are confident we did enough, we select the action according to a policy. Some useful ones:
+	1. max child: select highest reward 
+	2. robust child: most visited node
+	3. max-robust child: both highest reward and most visited - if none exist: keep exploring until some point (see coulom)
+	4. secure child: the one who maximize a lower conf bound
+	
+######## 	EXTENSION
+	
+Later in 2006 Kocsis & Szepesvari (check this one) propose an extension of the algo using UCT algo: Upper Confidence Bound Tree which is now the most effective way of using MCTS. It basically improve the selection process by selecting the child node that maximize some quantity. The formula is such that a node has all is children explored at least once before we start expanding on of his children.
+
+#########	SELECTION
+The selection is done according to the probability of a move of being better than the current better one.  
+ 
+######### 	SIMULATION
+After choosing a node, the game is played randomly ie. players chose random decisions. The easiest way of doing that is to choose uniformly randomly among the possible options for every player. Note that for some games, we may tweak this random distribution given the knowledge we have on the game. For instance, for chess it is reasonable to assume that a pawn in position to take a queen will do it... so we can assign an higher probability of it to happen (without putting it to 1). This tweaking of the heuristic is called Heavy Playout. However, this may considerably reduce the speed of the simulation, so it is important to consider a balance importance rule / speed of evaluation.
+
+While heavy playout can be hard coded, it's also possible to learn them from sets of games. Drake & Uurtamo did this in 2007 to do a pattern playout. A pattern is a 3x3 section on the board that may be filled or not with stones: studying a database of ~3k games by experts on 9x9 board, they analyzed such patterns and their win%age to derive an adequate strategy. In their paper, they considered 3 different hard playout, plus random and made them fight together. The pattern playout was the strongest of them, winning about 80% of their games. 
+
+Similarly to the example of the queen, it's reasonable to assume that there is a low chance a player will sacrifice a queen to take a pawn, so it sounds reasonable to just prune this decision from the game tree. Note that this sounds terrible as we mentionned that we do not do pruning in MCST, however, on some specific games, with enough game knowledge we can know that some moves are always worse that other, thus we can safely prune them. An other example on tic tac toe: we know (some proof here maybe?) it's always better to play the middle case, so we can prune all actions that are not this one. These techniques are called Pruning with domain knowledge. Huang et al used this technique to improve the performance of a program by up to 50%. 
+
+#########	BACKPROPAGATIONs
+then to the node that has been expanded back to the root there is an update of information regarding the number of simulations that have been done & their win probabilities, as well as updating the std deviation of win. How to imporve backpropagation?
+	1. Score bonus: if 0 = lose and 1 = win, it may be useful to distinguish a strong win vs a weak win by saying win is {b or 1} 1 for a strong win and b for a weak win. For our setup, it may be useful to compare the results of the algorithm for [0,1] depending on who has more points, and counting the points.
+	2. decaying rewards: see [1]. It's about encouraging the algorithm to win as early as possible. (not appliable) 
+
+######### 	THE "PROBLEM"
+Observe that players are dealt random cards at the beginning of a game. Of course, you tipycally don't know what others have in hand appart from special case: "this player does not have this color" or "everyone knows that one player has this exact card". However, at each simulation, players will play all their cards. If we let them the same cards at each simulation, the ai will progressivly "learn" what others have in hand. Typically (like for the klondike) we solve this problem by reshuffling all the cards for each simulation. For belotte, this must be done carefully as some rules prevent players to play just any card. This is solved by Determinization
+
+######### 	DETERMINIZATION
+idea: at each iteration of the mcts algorithm, we randomly sample what we do not know. Call this distribution d. Then, when doing selection, we only select nodes that are acting accordingly to this random sample d. Same thing for simulation, etc. This allows to have simpler execution of simulation because for instance, the ai knows exactly what is inside his opponents hand. See this idea in [1][2]
+
+#########	Parallelization
+Parallelization may improve by a lot the computation. Several types of such stuff:
+	1. Leaf parallelization: when reaching a leaf (at simulation level) run several simulation on multiple threads.
+	2. Root parallelization: create multiple trees and merge them when you are out of budget. 
+	3. Also: tree parallelization with global/local mutex (...)
+
+Surprisingly method 3 outperforms (slightly) method 2 despise the additional # of communications. 
+
+######### 	NOTES
+As pointed in GIB [3], for games such as classique belotte it is difficult to directly apply a montecarlo-type methods as sometime, the best move when attacking is to play a weak card to gather informations on who as which colors. 
+
+
+
+#########	BIBLIO
+[1] Ensemble determinization in monte carlo tree search for the imperfect information card game magic: The gathering
+[2] Information Set Monte Carlo Tree Search
+[3] GIB: Imperfect Information in a Computationally Challenging Game
+
+
+

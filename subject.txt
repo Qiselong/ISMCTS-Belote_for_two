@@ -1,0 +1,32 @@
+As discussed in class, the exam of this course consists of an essay where you study:
+
+* How simulation is used to investigate a topic of your choice. In this case, you are expected to review different papers in the literature following these steps.
+	1) Frame questions for a review.
+	2) Identify relevant work.
+	3) Assess the quality of studies.
+	4) Summarize the evidence.
+	5) Interpret the findings.
+
+* A topic of your choice using simulation. In this case, you can start from the literature to find a case study and possible extensions and/or missing analysis. Then, you can use one of the tools shown during classes (or another simulation tool of your choice) to improve the system model and perform further analysis (e.g., sensitivity analysis, what-if analysis, etc.)
+
+* If you have other ideas, please get in touch and let's talk about it.
+
+
+Your essay should be organized as a paper (e.g., abstract, introduction, related work, model description, experiments, discussion, and conclusions). I expect 4 to 8 pages in the IEEE Conference Paper template. You can directly use it from Overleaf (https://www.overleaf.com/gallery/tagged/ieee-official) or find it in this folder. Instructions are available at: https://www.ieee.org/conferences/publishing/templates.html
+ 
+
+Three websites that you could start checking for some ideas (if you do not have any topic of preference) are:
+	1) https://dblp.uni-trier.de/db/conf/wsc/index.html
+	2) https://dblp.uni-trier.de/db/conf/pads/index.html
+	3) https://dblp.uni-trier.de/db/conf/ecms/index.html
+	
+Once you have found a topic of interest and a possible organization of your essay, I suggest you get in touch to discuss about your plan before starting writing (so that you do not waste time and energy on something that is not going to be useful). Of course, this is not a mandatory step.
+
+
+Although you can submit your homework by the end of May, I suggest you start working on the project as soon as possible for three reasons:
+	1) The course has just finished and the concepts are more "fresh".
+	2) If the essay is submitted at least one month before the deadline, I will give you feedback to improve it.
+	3) You are starting Advanced courses soon and new deadlines will pile up.
+	
+
+Finally, you can send your homework (a PDF file) to me (<riccardo.pinciroli@gssi.it>). Please, be sure to get a reply from me that confirms I received your essay. Otherwise, please send it again.
