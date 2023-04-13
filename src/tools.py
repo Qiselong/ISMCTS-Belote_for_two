@@ -1,6 +1,37 @@
 import random
 from Cards import Card
 import os
+import copy
+
+def determinization(cards, player):
+    """ generate a random determinization from the pov of player."""
+    st = copy.deepcopy(cards)
+    uk_cards = []   #list of uk cards
+    j = 0
+    idx = []        #idinces of uk cards in st.cards
+    for obs in st:
+        if obs.isVisible == False or (obs.inHand == True and obs.player != player):
+            uk_cards.append(copy.deepcopy(obs))
+            idx.append(j)
+        j+=1
+
+        #uk_cards is then a list of card whose positions are unknown to player. Now we have to shuffle the values.
+    uk_cards.shuffle()
+    for j in range(len(idx)):
+        st[j].change_vals(uk_cards[j].col, uk_cards[j].val)
+    return st
+
+def isTerminal(cards):
+    for obs in cards:
+        if obs.isPlayable == True:
+            return True
+    return False
+
+def doMove(game, card, attack = -1):
+    """ play the card. Change the game accordingly and return """
+    card.isPlayed = True
+    card.isPlayable = False
+    return update(game, card) #update unveil a possible card under card.
 
 def play(game, card):
     '''set card to unplayable, and reveal the card under it if necessary. Return the new game.'''

@@ -19,6 +19,11 @@ class Card:
             return pts_trump[self.val]
         else:
             return pts[self.val] 
+        
+    def change_vals(self, col, val):
+        #useful later to change the card id while keeping its other properties
+        self.col = col
+        self.val = val
             
     def name(self):
         """return the name of a card as a string of 3 char"""
