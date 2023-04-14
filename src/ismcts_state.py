@@ -1,17 +1,21 @@
 from tools_temp import *
 
-class state():
-    def init(self, cards=[],p='A',pts=[0,0], attack = -1 ):
-        self.cards = cards
-        self.attack = attack
-        self.points = pts
-        self.player = p
+class State():
+    def __init__(self, cards=[],p='A',pts=[0,0], attack = -1 ):
+        self.cards = cards      #cards state (list of len 32)
+        self.attack = attack    #potential attack card
+        self.points = pts       #
+        self.player = p         #player that will move
     
 
     def CloneAndRandomize(self):
         """randomize the information unknown to self.player."""
         # note that we dont have to specify which player do this, as this is always self.player: indeed this function is only called at the root which is exactly when the mcts player is self.player.
-        self.cards = determinization(self.cards, self.player)
+        st = copy.deepcopy(self)
+        st.cards = determinization(st.cards, st.player)
+        #print(st.player)
+        #print_game(st.cards, mode = 'B',cls = False)
+        return st
 
     def GetMoves(self):
         """ return a list of cards corresponding to legal moves"""
@@ -25,11 +29,12 @@ class state():
 
     def DoMove(self, card):
         """ change the state of game according to the play of card, aka change card status, player, points, and attack . """
-   
+        #print(f"play {card.name()}")
+
         #1. change card status
         for obs in self.cards: #find the card that is played and make it unplayble
             if obs == card:
-                obs.isPlayer = True
+                obs.isPlayed = True
                 obs.isPlayable = False
                 break
         self.cards = update(self.cards, card) #potentially unveil a card
@@ -58,4 +63,10 @@ class state():
             self.attack = -1
         else:
             self.attack = card
+    
+    def GetResult(self, player):
+        if player == 'A':
+            return self.points[0]
+        else:
+            return self.points[1]
     

@@ -6,6 +6,7 @@ from ismcts_state import *
 
 #TODO: UCBSELECTCHILD: change exploration & try different formulae
 
+joker = Card(-1,-1,'None', False, False, -1, False)
 class Node:
     """ A node in the game tree. Note wins is always from the viewpoint of playerJustMoved.
     """
@@ -13,7 +14,7 @@ class Node:
     def __init__(self, move=None, parent=None, playerJustMoved=None):
         self.move = move  # the move that got us to this node - "None" for the root node. moves are cards. we can infer player by looking at self.playerJustMoved.
         self.parentNode = parent  # "None" for the root node
-        self.childNodes = []                                                                
+        self.childNodes =[]                                                 
         self.wins = 0       # wins will be "score"
         self.visits = 0     # times going through that node
         self.avails = 1     # times going through a sibling of our node
@@ -54,8 +55,8 @@ class Node:
         return s
 
     def AddChild(self, m, p):
-        """ Add a new child node for the move m.
-            Return the added child node
+        """ Add a new child node for the move m. p is the player that did the move.
+            Return the added child node. note that m is a Card.
         """
         n = Node(move=m, parent=self, playerJustMoved=p)
         self.childNodes.append(n)
@@ -69,8 +70,8 @@ class Node:
             self.wins += terminalState.GetResult(self.playerJustMoved)
 
     def __repr__(self):
-        return "[M:%s W/V/A: %4i/%4i/%4i]" % (
-            self.move,
+        return "[M:%s P/g//W/V/A: %4i/%4i/%4i]" % (
+            self.move.name(),
             self.wins//self.visits, #modification to fit the model better
             self.visits,
             self.avails,
@@ -97,7 +98,7 @@ class Node:
         return s
     
 
-def ISMCTS(rootstate, itermax, verbose=False):
+def ISMCTS(rootstate, itermax=100, verbose=False):
     """ Conduct an ISMCTS search for itermax iterations starting from rootstate. rootstate is an instance of state
         Return the best move from the rootstate.
     """
@@ -111,9 +112,14 @@ def ISMCTS(rootstate, itermax, verbose=False):
         state = rootstate.CloneAndRandomize()
 
         # Select
+        #print([obs.name() for obs in state.GetMoves()])
+        #print([obs.name() for obs in node.GetUntriedMoves(state.GetMoves())])
+        #print("")
         while (
             state.GetMoves() != [] and node.GetUntriedMoves(state.GetMoves()) == []
+            
         ):  # node is fully expanded and non-terminal
+        
             node = node.UCBSelectChild(state.GetMoves())
             state.DoMove(node.move)
 
@@ -121,12 +127,13 @@ def ISMCTS(rootstate, itermax, verbose=False):
         untriedMoves = node.GetUntriedMoves(state.GetMoves())
         if untriedMoves != []:  # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(untriedMoves)
-            player = state.playerToMove
+            player = state.player
             state.DoMove(m)
             node = node.AddChild(m, player)  # add child and descend tree
 
-        # Simulate
+        #Simulate
         while state.GetMoves() != []:  # while state is non-terminal
+            #print(len(state.GetMoves()))
             state.DoMove(random.choice(state.GetMoves()))
 
         # Backpropagate
@@ -138,9 +145,9 @@ def ISMCTS(rootstate, itermax, verbose=False):
 
     # Output some information about the tree - can be omitted
     if verbose:
-        print(rootnode.TreeToString(0))
-    else:
-        print(rootnode.ChildrenToString())
+       print(rootnode.TreeToString(0))
+    #else:
+        #print(rootnode.ChildrenToString())
 
     return max(
         rootnode.childNodes, key=lambda c: c.visits

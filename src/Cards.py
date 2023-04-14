@@ -61,6 +61,13 @@ class Card:
             self.isVisible = True
             self.isPlayable = True
 
+    def __eq__(self, other):
+        if type(other) == int:
+            return False
+        return self.col == other.col and self.val == other.val
+    
+    def visBy(self, player):
+        return self.isPlayed == True or self.isVisible or (self.inHand and self.player == player) 
 
 
         

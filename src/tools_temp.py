@@ -5,6 +5,21 @@ import copy
 
 
 def determinization(cards, player):
+    st = copy.deepcopy(cards)
+    pos = []    #list containing characteristics of unveiled carts.
+    for obs in st:
+        if obs.visBy(player) == False: #if card inv for our player...
+            pos.append([obs.player, obs.inHand, obs.isPlayable, obs.position])
+            obs.player = -1
+
+    for obs in st:
+        if obs.player == -1:
+            pick = random.choice(pos)
+            pos.remove(pick)
+            obs.player, obs.inHand, obs.isPlayable, obs.position = pick[0], pick[1], pick[2], pick[3]
+    return st
+
+def determinization_NW(cards, player):
     """ generate a random determinization from the pov of player."""
     st = copy.deepcopy(cards)
     uk_cards = []   #list of uk cards
@@ -17,7 +32,7 @@ def determinization(cards, player):
         j+=1
 
         #uk_cards is then a list of card whose positions are unknown to player. Now we have to shuffle the values.
-    uk_cards.shuffle()
+    random.shuffle(uk_cards)
     for j in range(len(idx)):
         st[j].change_vals(uk_cards[j].col, uk_cards[j].val)
     return st
@@ -114,9 +129,10 @@ def can_play(game, player,  attack = -1):
         # or av_cards
         else: return av_cards
 
-def print_game(game, mode = 'B'): #TODO: something for what happens for non-linux users.
+def print_game(game, mode = 'B', cls = True): #TODO: something for what happens for non-linux users.
     """ print the state of a game. omni : see all, B: from the pov of player B. """
-    os.system('clear')
+    if cls:
+        os.system('clear')
     if mode == 'omni':
         print("######### BOARD #########")
         print("A")

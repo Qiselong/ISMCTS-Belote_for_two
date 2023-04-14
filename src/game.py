@@ -2,27 +2,32 @@ import random
 from Cards import Card
 import os
 from tools_temp import *
+from Mcts import *
+from ismcts_state import *
 
-
+itermax = 1000
 
 
 class Game:
 
     def __init__(self,A, B, pinit):
+        '''A \in {'r', 'mcts'}, B \in {'h', 'mcts', 'r'}'''
         self.stratA = A  #Note: A can not be a human player.
         self.stratB = B #Note: B is either a human or an AI.
         self.roundID = 1
         self.points = [0,0]
         self.cards = []
         self.history = '' # string containing all the informations of the previous rounds.
+        self.state = None
         if pinit == 'r': #initial player
             self.player = random.choice(['A', 'B'])
         else: self.player = pinit 
 
     def generation(self, method = 'r'):
-        ''' generate a shuffle of all the cards. 'r' -> all random '''
+        ''' generate a shuffle of all the cards, and initialize a gamestate. 'r' -> all random '''
         if method == 'r':
             self.cards = random_shuffle()
+        self.state = State(self.cards, self.player)
 
     def print(self, method = 'B'):
         ''' print the game. 'B' -> from the pov of B. Other mode: 'omni' -> see all.'''
@@ -34,14 +39,17 @@ class Game:
         ''' Returns a card of player according to a potential attack card.'''
         av = can_play(self.cards, player,attack)
 
-        def choice_strat(av, strat):
+        def choice_strat(av, strat, state = -1):
             '''choice of cards according to some strategy. 'r' = random 'h' = human'''
             if strat == 'r':
                 return random.choice(av)
             if strat == 'h':
                 c = card_choice(av)
-                return c 
-        
+                return c
+            if strat == 'mcts':
+                a = ISMCTS(self.state, itermax)
+                self.state.DoMove(a)
+                return a
         if self.player == 'A':
             return choice_strat(av, self.stratA)
         else:
@@ -56,8 +64,9 @@ class Game:
 
     def round(self):#, id):
         ''' given the winner of the last round, simulate a round. returns the winner of the round and updates the history.'''
+        print(self.history)
         self.history += f'R {self.roundID} : '
-        if self.player == 'B':
+        if self.player == 'B' and self.stratB == 'h':
             print_game(self.cards)
             print(self.history)
         attack = self.play_a_card(self.player)
@@ -66,7 +75,7 @@ class Game:
 
         self.next_player()
 
-        if self.player == 'B':
+        if self.player == 'B' and self.stratB == 'h':
             #clear screen + print history
             print_game(self.cards)
             print(self.history)
@@ -107,6 +116,7 @@ class Game:
 
 
     def sim(self):
+        '''play all the round after one another.'''
         for i in range(16):
             self.round()
         print(f'{self.player} earns 10 bonus points for last trick.')
