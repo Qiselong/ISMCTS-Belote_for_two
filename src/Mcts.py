@@ -98,7 +98,7 @@ class Node:
         return s
     
 
-def ISMCTS(rootstate, itermax=100, verbose=False):
+def ISMCTS(rootstate, itermax=100, verbose=False, exp=0.7):
     """ Conduct an ISMCTS search for itermax iterations starting from rootstate. rootstate is an instance of state
         Return the best move from the rootstate.
     """
@@ -120,7 +120,7 @@ def ISMCTS(rootstate, itermax=100, verbose=False):
             
         ):  # node is fully expanded and non-terminal
         
-            node = node.UCBSelectChild(state.GetMoves())
+            node = node.UCBSelectChild(state.GetMoves(), exploration=exp)
             state.DoMove(node.move)
 
         # Expand

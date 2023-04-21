@@ -5,13 +5,18 @@ from tools_temp import *
 from Mcts import *
 from ismcts_state import *
 
-itermax = 1000
+itermax = 500
+return_hist_winner = True
 
+
+global hist_winner
+hist_winner = []
 
 class Game:
 
     def __init__(self,A, B, pinit):
         '''A \in {'r', 'mcts'}, B \in {'h', 'mcts', 'r'}'''
+        hist_winner = []
         self.stratA = A  #Note: A can not be a human player.
         self.stratB = B #Note: B is either a human or an AI.
         self.roundID = 1
@@ -35,20 +40,25 @@ class Game:
         print(f"Points: A:{self.points[0]}, B: {self.points[1]}")
         print(self.history)
     
-    def play_a_card(self, player, attack = -1):
+    def play_a_card(self, player, attack = -1, exp = 0.7):
         ''' Returns a card of player according to a potential attack card.'''
-        av = can_play(self.cards, player,attack)
+        av = can_play(self.cards, self.player,attack)
 
         def choice_strat(av, strat, state = -1):
             '''choice of cards according to some strategy. 'r' = random 'h' = human'''
             if strat == 'r':
-                return random.choice(av)
+                c = random.choice(av)
+                self.state.DoMove(c)
+                return c
             if strat == 'h':
                 c = card_choice(av)
+                self.state.DoMove(c)
                 return c
             if strat == 'mcts':
-                a = ISMCTS(self.state, itermax)
+                #print(f'mcts plays. Player:{self.player} , available cards {[obs.name() for obs in av]}')
+                a = ISMCTS(self.state, itermax, exp = exp)
                 self.state.DoMove(a)
+                #print(f'move chose {a.name()}')
                 return a
         if self.player == 'A':
             return choice_strat(av, self.stratA)
@@ -59,31 +69,33 @@ class Game:
     def next_player(self):
         if self.player == 'A': 
             self.player = 'B'
-        else:
+        elif self.player == 'B':
             self.player = 'A'
 
-    def round(self):#, id):
+    def round(self, exp = 0.7):#, id):
         ''' given the winner of the last round, simulate a round. returns the winner of the round and updates the history.'''
-        print(self.history)
+        #print(self.history)
         self.history += f'R {self.roundID} : '
         if self.player == 'B' and self.stratB == 'h':
             print_game(self.cards)
             print(self.history)
-        attack = self.play_a_card(self.player)
+        attack = self.play_a_card(self.player, exp = exp)
         self.cards = play(self.cards, attack)
         self.play_hist(attack)                      #hist update after each play
 
         self.next_player()
+        #print(f'player changed to {self.player} after the other played {attack.name()}!')
 
         if self.player == 'B' and self.stratB == 'h':
             #clear screen + print history
             print_game(self.cards)
             print(self.history)
-        defense = self.play_a_card(self.player, attack)
+        defense = self.play_a_card(self.player, attack, exp=exp)
         self.cards = play(self.cards, defense)
         self.play_hist(defense)                     #hist update after each play
         self.player = self.round_hist(attack, defense)   #hist update: end of round + update for round winner
         self.roundID += 1
+        hist_winner.append(self.player)
 
     def play_hist(self,c):
         '''update the history when p plays c. (eventually revealing cards etc.), eol: if true then adds and endofline char after appending the history. '''
@@ -115,11 +127,13 @@ class Game:
         else: self.points[1] += pts
 
 
-    def sim(self):
+    def sim(self, verbose = True,exp = 0.7):
         '''play all the round after one another.'''
         for i in range(16):
-            self.round()
-        print(f'{self.player} earns 10 bonus points for last trick.')
+            self.round(exp)
+            #print(len(hist_winner))
+            #print_game(self.cards, cls = False)
+        if verbose: print(f'{self.player} earns 10 bonus points for last trick.')
         if self.player == 'B':
             self.points[1] += 10
         else: self.points[0] += 10
@@ -128,8 +142,9 @@ class Game:
         elif self.points[0] == 81:
             winner = 'None'
         else: winner = 'B'
-        print(f'winner: {winner}, final score: {self.points}')
-
+        if verbose: print(f'winner: {winner}, final score: {self.points}')
+        if return_hist_winner:
+            return hist_winner
 
 
 
@@ -172,8 +187,8 @@ def random_game():
                 history += winner +' wins '+str(attack.points()+defense.points())+ 'points.' + ' ## '
 
         elif winner == 'B':
-            print_game(game)
-            print(history)
+            #print_game(game)
+            #print(history)
             playable_B = can_play(game, 'B')
             attack = card_choice(playable_B)
             #attack.play()
@@ -201,4 +216,4 @@ def random_game():
         gA += 10
     else: 
         gB += 10
-    print(gA, gB)
+    #print(gA, gB)
