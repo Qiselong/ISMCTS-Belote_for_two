@@ -34,6 +34,23 @@ class Game:
         if method == 'r':
             self.cards = random_shuffle()
         self.state = State(self.cards, self.player)
+        if method == 'f': # 'fair' generation aka both players have at least 2 trumps and the nbr of points distributed is between 66 and 86)
+            def is_fair(cards):
+                #1. check that # trumps is >= 2 for both players
+                #2. check that player A has points in (66, 86)
+                pA = 0
+                tA = 0
+                tB = 0
+                for c in cards:
+                    tA += (c.col== 0) and (c.player == 'A')
+                    tB += c.col == 0 and c.player == 'B'
+                    pA += (c.player == 'A')*c.points()
+                return min(tA, tB) >= 2 and pA <= 86 and pA >= 66
+            self.cards = random_shuffle()
+            while not is_fair(self.cards) : 
+                self.cards = random_shuffle()
+        self.state = State(self.cards, self.player)
+        return self.cards
 
     def print(self):
         ''' print the game. 'B' -> from the pov of B. Other mode: 'omni' -> see all.'''

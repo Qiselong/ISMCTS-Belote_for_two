@@ -31,38 +31,43 @@ def listTostr(L):
         l+=str(i)
     return l
 
+play_again = True
 
-#for k in range(300):
-    hist_winner = []
-    t0 = time.time()
-    #UI
-    os.system('clear')
-    f = open('logsB.txt','a')
-    print(f'Game n°{k+1}. Current avg scores: {pts[0]//max(k,1)} (r) to {pts[1]//max(k,1)} (mcts); avg_time {TTime/(max(k,1))}')
-  
-    #Simulation
-    g = Game('r', 'mcts', 'r')
-    g.generation('r')
-    hist_winnerz = g.sim(False)[-16:]
-    print(len(hist_winnerz))
-    t1 = time.time()
+while play_again:
 
-    #post treatement
-    pts[0] += g.points[0]
-    pts[1] += g.points[1]
-    f.write(str(g.points[0])+';'+ str(g.points[1])+';'+listTostr(hist_winnerz) +'\n')
+    g = Game('mcts', 'h', 'r')
+    cards = g.generation('f')
+#tA, pA, tB = 0,0,0
+#for c in cards:
+    #tA += (c.col== 0) and (c.player == 'A')
+   # tB += c.col == 0 and c.player == 'B'
+  #  pA += (c.player == 'A')*c.points()
+ #   print(c.name(), c.player)
+#print(tA, tB, pA)
+#x = input()
+    fst_player = '' # records 
+    fst_player += g.player
 
-    TTime += t1-t0
-    appendA(hist_winnerz)
-    appendB(hist_winnerz)
+    for i in range(16):
     
-#print(winner_A)
-#print(winner_B)
+        g.round()
+        fst_player+=g.player
+    if g.player == 'A':
+        g.points[0]+=10
+    else:
+        g.points[1] += 10
+    print(f'Final score:{g.points[0]} to {g.points[1]}')
+    if g.points[1] > g.points[1]:
+        print("Congratulations !")
+    else:
+        print("", end ="")
+        #print("XD ! You are so bad!! Note that I'm writing this without having played myself agaisnt the ISMCTS, so i'm probably also bad.")
 
-
-
-g = Game('mcts', 'h', 'B')
-g.generation()
-g.sim()
+    f = open('../logs.txt', 'a')
+    f.write(fst_player+';'+str(g.points[0])+'\n')
+    f.close()
+    print('\n\n')
+    x = input('type enter to play again')
+    play_again = (x == '')
 
 #print_game(g.cards, mode = 'omni')

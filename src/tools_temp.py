@@ -71,7 +71,13 @@ def card_choice(av):
     for c in av:
         print(' ' + str(it), end = '  ')
         it += 1
-    x = int(input('\ncard choice: '))
+    x = -1
+    while x <0 or x >=len(av):
+        x = input('\ncard choice: ')
+        if x.isdigit():
+            x = int(x)
+        else: 
+            x = -1
     return av[x]
 
 def update(game, c):
