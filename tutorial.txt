@@ -1,0 +1,19 @@
+Some cards on the board are visible to both players (VISI) and some are invisible for the moment (INVI).When a VISI card is played, the card under it, if it exists is revealed to both player and moves to the VISI part of the board. Cards in HAND are only visible to the player owning them. When you have to play a card, you can only play that is on your side of the board and you can see. ??? denotes a card you cannot see because it is hidden or in the hand of your opponent. Type enter to continue
+
+
+The game goes in 16 tricks. The attacking player plays one of his cards, and the defender plays one of his own according to the rules. The winner of the trick becomes the attacking player for the next trick. Type enter to continue
+
+
+The color of the attacking card is the dominant color of the trick. The defending player must play a card of the same color if he owns one. If they does not, they must play a trump card. They can play any card otherwise. Trump cards are Clubs card in this program. Trump cards always win against other colors. When the dominant color is trump, the defending player must play a stronger trump, otherwise a trump, otherwise anything else.  Order of strength: Non-trump : A > 10 > K > Q > J > 9 > 8 > 7  Trump     : J > 9 > A > 10 > K > Q > 8 > 7  To remember easily, just note that the trump order is the same but with J and 9 shifted as best cards. Please also note that 10 is unusually stronger than figures. Type enter to continue
+
+The next time you type enter, the opponent will play a card of his hand, AD. You have exactly one Diamond card: JD, so you will be forced to play it. A prompt will appear on the screen, you will have to press the number associated to JD (0) and enter to play it. 
+As Diamond is not the trump color and A > J, A wins the trick as well as 13 points. The points distribution is the following:
+
+Non-trump : A > 10 > K > Q > J > 9 > 8 > 7
+            11  10   4   3   2   0   0   0      
+Trump     : J > 9 > A > 10 > K > Q > 8 > 7
+            20  14  11  10   4   3   0   0 
+
+Making a grand total of 162 points, including the 10 bonus points to the winner of the 16th trick.  On the first trick, your opponent earned 11 + 2 = 13 points.
+Note that below the board, you can see the current score and a detail round by round of what happened. In particular, you can see if cards has been revealed from INVI to VISI. Now, QD is available for you to play in future tricks.
+Now the game will play the tricks until all cards are played. Try to score the maximum number of points. Type enter to continue

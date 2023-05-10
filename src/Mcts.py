@@ -104,6 +104,8 @@ def ISMCTS(rootstate, itermax=100, verbose=False, exp=0.7):
     """
 
     rootnode = Node()
+    if exp == 0.7:
+        exp = 82
 
     for i in range(itermax):
         node = rootnode
@@ -148,7 +150,7 @@ def ISMCTS(rootstate, itermax=100, verbose=False, exp=0.7):
        print(rootnode.TreeToString(0))
     #else:
         #print(rootnode.ChildrenToString())
-
+    #print(rootnode.ChildrenToString())
     return max(
         rootnode.childNodes, key=lambda c: c.visits
     ).move  # return the move that was most visited

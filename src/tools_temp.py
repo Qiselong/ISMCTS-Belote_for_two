@@ -1,6 +1,7 @@
 import random
 from Cards import Card
 import os
+import platform
 import copy
 
 
@@ -132,7 +133,14 @@ def can_play(game, player,  attack = -1):
 def print_game(game, mode = 'B', cls = True): #TODO: something for what happens for non-linux users.
     """ print the state of a game. omni : see all, B: from the pov of player B. """
     if cls:
-        os.system('clear')
+        if platform.system() == 'Linux':
+            os.system('clear')
+        elif platform.system() == 'Darwin':
+            # Mac
+            os.system('cls') #TODO: verify this actually works?
+        elif platform.system() == 'Windows':
+            os.system('cls')
+
     if mode == 'omni':
         print("######### BOARD #########")
         print("A")

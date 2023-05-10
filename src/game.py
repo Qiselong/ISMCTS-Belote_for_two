@@ -14,7 +14,7 @@ hist_winner = []
 
 class Game:
 
-    def __init__(self,A, B, pinit):
+    def __init__(self,A, B, pinit, view = 'B'):
         '''A \in {'r', 'mcts'}, B \in {'h', 'mcts', 'r'}'''
         hist_winner = []
         self.stratA = A  #Note: A can not be a human player.
@@ -24,6 +24,7 @@ class Game:
         self.cards = []
         self.history = '' # string containing all the informations of the previous rounds.
         self.state = None
+        self.view = view #printing method
         if pinit == 'r': #initial player
             self.player = random.choice(['A', 'B'])
         else: self.player = pinit 
@@ -34,13 +35,13 @@ class Game:
             self.cards = random_shuffle()
         self.state = State(self.cards, self.player)
 
-    def print(self, method = 'B'):
+    def print(self):
         ''' print the game. 'B' -> from the pov of B. Other mode: 'omni' -> see all.'''
-        print_game(self.cards, method)
+        print_game(self.cards, self.view)
         print(f"Points: A:{self.points[0]}, B: {self.points[1]}")
         print(self.history)
     
-    def play_a_card(self, player, attack = -1, exp = 0.7):
+    def play_a_card(self, player, attack = -1, exp = 100):
         ''' Returns a card of player according to a potential attack card.'''
         av = can_play(self.cards, self.player,attack)
 

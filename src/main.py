@@ -59,7 +59,9 @@ def listTostr(L):
 #print(winner_A)
 #print(winner_B)
 
-g = Game('r', 'h', 'B')
+
+
+g = Game('mcts', 'h', 'B')
 g.generation()
 g.sim()
 
