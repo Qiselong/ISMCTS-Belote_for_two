@@ -10,7 +10,13 @@ Notes:
 
 You can find the rules in the file tutorial.txt; alternatively I suggest you run tutorial.py to play a test-game against a random opponent.
 
-The game is played by running main.py. You play cards by typing an integer then "enter". If you type anything else the program will crash; please do not use this intentionally. 
+The game is played by running main.py. When it is your turn to play, the program suggest to you playable cards. You then enter the corresponding number then enter.
 
-At the end of each game, the logs are automatically stored in logs.txt. When you are done participating in the experiment, please send this file to me at thomas.boudier@gssi.it 
+A game tipycally lasts 2 to 6 minutes depending on how much thinking you give it. I do not require from you a minimum number of game to be played, just send me the results when you are done with it. 
+At the end of each game, the logs are automatically stored in logs.txt. When you are done participating in the experiment, please send this file to me at thomas.boudier@gssi.it. 
+
+Some tips:
+    - your opponent cannot infer what is in your hand from your previous moves.
+    - your opponent never does "exploration" moves, aka sacrificing a card to get informations about the cards in hand; but you can.
+    - cards in hand have more values than cards visible to all. The more cards you have in hands, the less enlightened will be the decisions of your opponent.
 
