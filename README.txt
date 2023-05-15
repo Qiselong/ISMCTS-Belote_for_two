@@ -14,9 +14,10 @@ The game is played by running main.py. When it is your turn to play, the program
 
 A game tipycally lasts 2 to 6 minutes depending on how much thinking you give it. I do not require from you a minimum number of game to be played, just send me the results when you are done with it. 
 At the end of each game, the logs are automatically stored in logs.txt. When you are done participating in the experiment, please send this file to me at thomas.boudier@gssi.it. 
+In STA.pdf you can find a complete description on how the AI works as well as reference under the form of a research report.
 
 Some tips:
-    - your opponent cannot infer what is in your hand from your previous moves.
+    - your opponent cannot infer what is in your hand from your previous moves, but you can.
     - your opponent never does "exploration" moves, aka sacrificing a card to get informations about the cards in hand; but you can.
     - cards in hand have more values than cards visible to all. The more cards you have in hands, the less enlightened will be the decisions of your opponent.
-
+    - the less information are hidden to your opponent, the better he will become as his prediction will be more accurate.
