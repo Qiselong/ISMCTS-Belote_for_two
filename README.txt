@@ -6,7 +6,7 @@ The two executions you may want to do are for files:
 Notes: 
     - you need to have python working on your computer. you can find it here: https://www.python.org/downloads/
     - the programm should work fine for linux, windows & mac. However, if you have any problem on your windows or mac, please mail me as soon as possible so I can fix it in time.
-    - the deadline for sending the logs is 21th of May, please don't forget about it !
+    - the deadline for sending the logs is 25th of May, please don't forget about it ! Also, when sending the logs, tell me if you want to be credited in the final report.
 
 You can find the rules in the file tutorial.txt; alternatively I suggest you run tutorial.py to play a test-game against a random opponent.
 
